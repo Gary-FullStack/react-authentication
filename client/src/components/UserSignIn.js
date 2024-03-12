@@ -1,8 +1,10 @@
 import { useContext, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ThemeContext from '../context/ThemeContext';
+import UserContext from '../context/UserContext';
 
 const UserSignIn = () => {
+  const {actions} = useContext(UserContext);
   const { accentColor } = useContext(ThemeContext);
   const navigate = useNavigate();
 
@@ -19,34 +21,20 @@ const UserSignIn = () => {
       username: username.current.value,
       password: password.current.value
 
-    };
-
-    const encodedCredentials = btoa(`${credentials.username}:${credentials.password}`);
-
-    const fetchOptions = {
-      method: 'GET',
-      headers: {
-        Authorization: `Basic ${encodedCredentials}`
-      }
-
-    };
-
-    const response = await fetch("http://localhost:5001/api/users", fetchOptions);
-    try{
-      if(response.status === 200) {
-        const user = await response.json();
-        console.log(`Welcome ${user.username} , you are now active on the site!`);
+    };    
+    
+    try{   
+      const user = await actions.signIn(credentials);
+      if(user) {
         navigate('/authenticated');
-      } else if(response.status === 401) {
-        setErrors(['Access Denied']);
       } else {
-        throw new Error();
+        setErrors(['Sign-in was unsuccessful']);
       }
+          
     } catch(error) {
       console.log(error);
       navigate('/error');
     }
-
   }
 
   const handleCancel = (event) => {
