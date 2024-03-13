@@ -1,8 +1,11 @@
 import { useContext, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import UserContext from '../context/UserContext';
 import ThemeContext from '../context/ThemeContext';
 
 const UserSignIn = () => {
+
+  const { actions } = useContext(UserContext);
   const { accentColor } = useContext(ThemeContext);
   const navigate = useNavigate();
 
@@ -33,7 +36,11 @@ const UserSignIn = () => {
       try{      
         const response = await fetch('http://localhost:5001/api/users', fetchOptions);
       if (response.status === 201) {
-        console.log(`User ${user.username} has been created!`);      
+        console.log(`User ${user.username} has been created!`);
+
+        await actions.signIn(user);
+        navigate('/authenticated');      
+
       } else if (response.status === 400) {
         const data = await response.json();
         setErrors(data.errors); 
