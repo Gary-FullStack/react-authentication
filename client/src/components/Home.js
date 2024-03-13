@@ -2,7 +2,7 @@ const Home = () => {
   return (
     <div className="bounds">
       <div className="grid-100">
-        <h1>Welcome to the Main Page</h1>
+        <h1>Welcome to my HomePage</h1>
       </div>
     </div>
   ); 
