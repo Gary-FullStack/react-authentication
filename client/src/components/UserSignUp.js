@@ -1,7 +1,9 @@
 import { useContext, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { api } from '../utils/apiHelper';
 import UserContext from '../context/UserContext';
 import ThemeContext from '../context/ThemeContext';
+import Errors from './Errors';
 
 const UserSignIn = () => {
 
@@ -24,17 +26,9 @@ const UserSignIn = () => {
         username: username.current.value,
         password: password.current.value
       }
-
-      const fetchOptions = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8'
-        },
-        body: JSON.stringify(user)
-      };
       
       try{      
-        const response = await fetch('http://localhost:5001/api/users', fetchOptions);
+        const response = await api("/users", "POST", user);
       if (response.status === 201) {
         console.log(`User ${user.username} has been created!`);
 
@@ -65,16 +59,8 @@ const UserSignIn = () => {
       <div className="grid-33 centered signin">
         <h1>Sign up</h1>
         <div>
-        {errors.length ? (
-            <div>
-              <h2 className="validation--errors--label">Validation errors</h2>
-              <div className="validation-errors">
-                <ul>
-                  {errors.map((error, i) => <li key={i}>{error}</li>)}
-                </ul>
-              </div>
-            </div>
-          ) : null }
+          <Errors errors={errors} />
+          
           <form onSubmit={handleSubmit}>
             <input
               id="name"
